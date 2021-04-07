@@ -1,9 +1,22 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+require('dotenv').config();
 
 const feedRoutes = require('./routes/feed');
 
 const app = express();
+
+mongoose
+  .connect(process.env.MONGO_URI, {
+    useFindAndModify: true,
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => {
+    console.log('Database connected');
+  })
+  .catch((err) => console.log(err));
 
 // app.use(bodyParser.urlencoded()); // x-www-form-urlencoded <form>
 app.use(bodyParser.json()); // application/json
