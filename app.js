@@ -1,3 +1,5 @@
+const path = require('path');
+
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
@@ -21,6 +23,9 @@ mongoose
 // app.use(bodyParser.urlencoded()); // x-www-form-urlencoded <form>
 app.use(bodyParser.json()); // application/json
 
+// Serve image statically
+app.use('/images', express.static(path.join(__dirname, 'images')));
+
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader(
@@ -32,5 +37,15 @@ app.use((req, res, next) => {
 });
 
 app.use('/feed', feedRoutes);
+
+// Custom error middleware
+app.use((err, req, res, next) => {
+  console.log(err);
+  const statusCode = err.statusCode || 500;
+  const message = err.message;
+  return res.status(statusCode).json({
+    message,
+  });
+});
 
 app.listen(5000, () => console.log('App is running'));
